@@ -17,13 +17,14 @@ class WorkspaceManager:
     Handles item enumeration, comparison, and deployment operations.
     """
     
-    def __init__(self, workspace_id: str, workspace_path: Path, items_in_scope: List[str], repository_directory: Optional[Path] = None):
+    def __init__(self, workspace_id: str, workspace_path: Path, items_in_scope: Optional[List[str]], repository_directory: Optional[Path] = None):
         """Initialize workspace manager.
         
         Args:
             workspace_id: Target workspace GUID
             workspace_path: Local path containing items to deploy (used for conflict scanning)
-            items_in_scope: List of item types to include (e.g., ['Notebook', 'Lakehouse'])
+            items_in_scope: List of item types to include (e.g., ['Notebook', 'Lakehouse']).
+                None or empty includes every item type.
             repository_directory: Root directory passed to fabric_cicd as repository_directory.
                 When set to the *parent* of workspace_path, fabric_cicd will deploy items
                 into a named Fabric workspace folder matching workspace_path.name.

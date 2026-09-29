@@ -127,3 +127,44 @@ def test_update_docs_uri_with_ref_ref_not_in_url():
     original = "https://github.com/microsoft/repo/blob/main/README.md"
     result = update_docs_uri_with_ref(original, "v1.0.0", "v2.0.0")
     assert result == original
+
+
+@patch("fabric_jumpstart.core.jumpstart._install_with_config")
+def test_install_from_github_requires_only_logical_id_and_repo_url(mock_install):
+    """repo_ref, entry_point and items_in_scope are optional and default to None."""
+    from fabric_jumpstart.core import jumpstart
+
+    jumpstart()._install_from_github(
+        logical_id="my-jumpstart", repo_url="https://github.com/example/repo"
+    )
+
+    config = mock_install.call_args.args[0]
+    assert config["source"]["repo_ref"] is None
+    assert config["source"]["workspace_path"] == "my-jumpstart/"
+    assert config["entry_point"] is None
+    assert config["items_in_scope"] is None
+
+
+@patch("fabric_jumpstart.installer.clone_repository")
+def test_prepare_workspace_passes_none_repo_ref_to_clone(mock_clone):
+    """A missing repo_ref reaches clone_repository as None, which clones 'main'."""
+    mock_clone.return_value = MagicMock()
+    config = _make_config()
+    config["source"]["repo_ref"] = None
+    JumpstartInstaller(config, workspace_id="ws-123", instance_name="js").prepare_workspace()
+
+    _, kwargs = mock_clone.call_args
+    assert kwargs["ref"] is None
+
+
+def test_collect_planned_items_without_scope_includes_every_item_type(tmp_path):
+    """items_in_scope=None collects every Name.Type folder."""
+    from fabric_jumpstart.workspace_manager import WorkspaceManager
+
+    for item in ("nb.Notebook", "lh.Lakehouse", "run.DataPipeline", "model.SemanticModel"):
+        (tmp_path / item).mkdir()
+
+    wm = WorkspaceManager("ws-id", tmp_path, None)
+    assert wm.collect_planned_items() == [
+        "lh.Lakehouse", "model.SemanticModel", "nb.Notebook", "run.DataPipeline"
+    ]
