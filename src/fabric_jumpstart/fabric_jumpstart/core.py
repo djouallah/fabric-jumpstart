@@ -477,9 +477,9 @@ class jumpstart:
         self,
         logical_id: str,
         repo_url: str,
-        repo_ref: str,
-        entry_point: str,
-        items_in_scope: List[str],
+        repo_ref: Optional[str] = None,
+        entry_point: Optional[str] = None,
+        items_in_scope: Optional[List[str]] = None,
         workspace_path: Optional[str] = None,
         name: str = '',
         files_source_path: Optional[str] = None,
@@ -492,7 +492,8 @@ class jumpstart:
         Install a jumpstart directly from a GitHub source without registry registration.
 
         Use this method to test a jumpstart before it has been officially added to the
-        registry. All required source fields are provided as arguments.
+        registry. Only ``logical_id`` and ``repo_url`` are required; every other field
+        has a default.
 
         By convention, Fabric workspace items live in a sub-folder of the repo whose name
         matches ``logical_id``.  ``workspace_path`` defaults to ``"{logical_id}/"`` so
@@ -503,9 +504,12 @@ class jumpstart:
                         Used as the default workspace sub-folder name and as the item
                         prefix key.
             repo_url: Public GitHub repository URL.
-            repo_ref: Specific tag or commit SHA (not a branch).
+            repo_ref: Git tag, branch or commit SHA to clone. Defaults to ``"main"``.
             entry_point: First item a user should open (e.g. "GettingStarted.Notebook").
+                         When omitted, no entry link is shown after install.
             items_in_scope: List of Fabric item type names included in this jumpstart.
+                            When omitted, every item found under ``workspace_path``
+                            is deployed.
             workspace_path: Path within the repo containing the Fabric workspace items.
                             Defaults to ``"{logical_id}/"`` when not provided.
             name: Human-readable display name (optional; defaults to ``logical_id``).

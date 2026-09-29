@@ -78,25 +78,20 @@ Use `_install_from_github()` to test a jumpstart directly from a GitHub repo bef
 import fabric_jumpstart as jumpstart
 
 jumpstart._install_from_github(
-    logical_id="my-jumpstart", # sets name of root folder that items are deployed to
+    logical_id="my-jumpstart",                   # sets name of root folder that items are deployed to
     repo_url="https://github.com/my-org/my-repo",
-    repo_ref="v1.0.0",                           # tag or commit SHA — not a branch
-    workspace_path="my-jumpstart/",              # defaults to "{logical_id}/"
-    entry_point="GettingStarted.Notebook",
-    items_in_scope=["Lakehouse", "Notebook"],
-    workspace_id="<guid>",                       # target workspace (auto-resolves to the current ws in Fabric)
 )
 ```
 
-Common optional parameters:
+Only `logical_id` and `repo_url` are required. Common optional parameters:
 
 ```python
 jumpstart._install_from_github(
     logical_id="my-jumpstart",
     repo_url="https://github.com/my-org/my-repo",
-    repo_ref="abc1234",
-    entry_point="GettingStarted.Notebook",
-    items_in_scope=["Lakehouse", "Notebook", "SQLEndpoint"],
+    repo_ref="v1.0.0",                           # tag, branch or commit SHA (defaults to "main")
+    entry_point="GettingStarted.Notebook",       # item linked after install (defaults to none)
+    items_in_scope=["Lakehouse", "Notebook"],    # item types to deploy (defaults to all found)
     workspace_path="my-jumpstart/",              # defaults to "{logical_id}/"
     name="My Jumpstart",                         # display name (defaults to logical_id)
     workspace_id="<guid>",                       # target workspace (auto-detected in Fabric)
